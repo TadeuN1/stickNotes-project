@@ -1,4 +1,4 @@
-# Habit Tracker
+# STICK NOTES
 <img src="src/assets/sticknotes.png"/>
 
 > Project to create stick with information for activities, with options to exclude and edit stick already created.
