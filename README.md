@@ -3,6 +3,6 @@
 
 > Project to create stick with information for activities, with options to exclude and edit stick already created.
 
-## ☕ HOW TO USE HABIT TRACKER ?! IT'S VERY EASY
+## ☕ HOW TO USE STICK NOTES ?! IT'S VERY EASY
 
 Acess: https://sticknotesactivities.vercel.app/
