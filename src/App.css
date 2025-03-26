@@ -1,0 +1,104 @@
+.container{
+    max-width: 920px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
+.header{
+    display: flex;
+    width: 100%;
+    height: 60px;
+    padding: 10px auto;
+    margin-bottom: 40px;
+}
+.title{
+    font-size: 28px;
+    color: white;
+    font-weight: bold;
+    padding-top: 10px;
+}
+.contador{
+    font-size: 28px;
+    color: white;
+    font-weight: bold;
+    padding-top: 10px;
+    text-decoration:underline;
+}
+.inputInfo{
+    width: 80%;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.input{
+    width: 100%;
+    height: 60%;
+    text-align: center;
+    font-size: 22px;
+    border-radius: 12px;
+}
+.button{
+    width: 60%;
+    height: 40%;
+    font-size: 18px;
+    border-radius: 8px;
+    background-color: darkblue;
+    color: white;
+}
+.stickers{
+    border: 4px inset #4f4543;
+    border-radius: 12px;
+    margin: 10px;
+    width: 80%;
+    text-align: center;
+    align-content: center;
+    display: flex;
+    height: 100px;
+}
+.info{
+    display: flex;
+    width: 90%;
+    height: 100%;
+    padding-top: 28px;
+    color: white;
+    font-weight:500;
+    font-size: 22px;
+    overflow:auto;
+
+}
+.actionButtons{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 15%;
+}
+.editar{
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    background-color: blueviolet;
+    color: white;
+    cursor: pointer;
+    border: 4px inset #4f4543;
+    opacity: .8;
+}
+.excluir{
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+    border: 4px inset #4f4543;
+    opacity: .8;
+}
+.editar:hover{
+    opacity: 1.5;
+}
+.excluir:hover{
+    opacity: 1.5;
+}
