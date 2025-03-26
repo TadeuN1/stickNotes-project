@@ -110,7 +110,7 @@ export default function App(){
            </button>
       </div>
 
-      {tarefas.map((item, index) => (
+      {tarefas.map((item) => (
         <section key={item} className='stickers'>
 
           <div className='info'>
