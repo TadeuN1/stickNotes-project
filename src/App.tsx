@@ -1,133 +1,173 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import './App.css'
- 
-export default function App(){
+import { useEffect, useRef, useState } from 'react';
+import './App.css';
 
-  const inputRef = useRef<HTMLInputElement>(null)
-  const primeiraRend = useRef(true)  //Com esse status consigo ordenar os useEffect
+type Task = {
+  id: string;
+  text: string;
+  createdAt: number;
+};
 
-  const [valores, setValores] = useState("")
-  const [tarefas, setTarefas] = useState<string[]>([])
+const STORAGE_KEY = '@sticknotes:tasks';
+const LEGACY_KEY = '@projectreact';
 
-  const [edicao, setEdicao] = useState({
-    ativo: false,
-    tarefa:''
-  })
+function loadInitialTasks(): Task[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw) as Task[];
 
-  useEffect(() => { //UseEffect ajuda a aplicação a focar em renderizações, sempre que o valor de referência sofrer alterações
-
-    const tarefasSalvas = localStorage.getItem("@projectreact")     //Necessário para executar primeiro e não apagar dados do useEffect anterior
-    
-    if(tarefasSalvas){
-      setTarefas(JSON.parse(tarefasSalvas))
+    // Migração do formato antigo (string[]) para o novo (Task[])
+    const legacy = localStorage.getItem(LEGACY_KEY);
+    if (legacy) {
+      const arr = JSON.parse(legacy) as string[];
+      return arr.map((text) => ({
+        id: crypto.randomUUID(),
+        text,
+        createdAt: Date.now(),
+      }));
     }
-
-  }, [])   //Sem valor, renderizará no início da aplicação
-
-  useEffect(() => { // UseEffect renderiza sempre que o valor mudar e executa seu código interno
-    
-    if(primeiraRend.current){
-      primeiraRend.current = false; 
-      return;
-    }
-
-    localStorage.setItem("@projectreact", JSON.stringify(tarefas))
-
-  }, [tarefas]) // Sempre com uma nova tarefa irá renderizar
-
-
-
-  const registrador = useCallback( () => { //Callback usado para melhorar performance, evitando renderização desnecessária.
-
-    if(!valores){
-      return
-    }
-
-    if(edicao.ativo){
-      salvarEdicao();
-      return
-    }
-
-    setTarefas( tarefas => [...tarefas, valores])
-    setValores("")
-
-  },[valores, tarefas]) //Referencia valores que dispara a função
-
-  function salvarEdicao(){
-    const acharIndexTarefa = tarefas.findIndex( tarefa => tarefa === edicao.tarefa)
-    const todasTarefas = [...tarefas]
-
-    todasTarefas[acharIndexTarefa] = valores;
-    setTarefas(todasTarefas);
-
-    setEdicao({
-      ativo: false,
-      tarefa: ''
-    })
-
-    setValores("")
-
+    return [];
+  } catch {
+    return [];
   }
-  function excluir(item: string){
-    const removerTarefa = tarefas.filter(tarefa => tarefa !== item)
-    setTarefas(removerTarefa)
+}
+
+function createId(): string {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return crypto.randomUUID();
   }
-  function editar(item: string){
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
 
-    inputRef.current?.focus(); //Ao clicar em editar, o foco vai direto para a barra de edição
+export default function App() {
+  const [tasks, setTasks] = useState<Task[]>(loadInitialTasks);
+  const [value, setValue] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
-    setValores(item)
-    setEdicao({
-      ativo: true,
-      tarefa: item
-    })
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  }, [tasks]);
 
+  const isEditing = editingId !== null;
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const text = value.trim();
+    if (!text) return;
+
+    if (isEditing) {
+      setTasks((prev) =>
+        prev.map((t) => (t.id === editingId ? { ...t, text } : t))
+      );
+      setEditingId(null);
+    } else {
+      setTasks((prev) => [
+        ...prev,
+        { id: createId(), text, createdAt: Date.now() },
+      ]);
+    }
+    setValue('');
+    inputRef.current?.focus();
   }
-  const totalTarefas = useMemo(() => {  // Evita renderizações totais desnecessárias, aumentando a eficiência da aplicação.
-    return tarefas.length               // Simples e eficiente.
-  }, [tarefas])                         // Referência dos valores atualizados em tempo real.
 
-  return(
+  function handleEdit(task: Task) {
+    setValue(task.text);
+    setEditingId(task.id);
+    inputRef.current?.focus();
+  }
 
-    <div className='container'>
+  function handleCancel() {
+    setValue('');
+    setEditingId(null);
+  }
 
-        <div className='header'>
-          <h2 className='title'> Lista de Tarefas </h2>
-          { totalTarefas > 0 && totalTarefas < 2 && <h3 className='contador'> Você tem {totalTarefas} tarefa pendente </h3> }
-          { totalTarefas > 1 && <h3 className='contador'> Você tem {totalTarefas} tarefas pendentes </h3> }
-        </div>
-        
+  function handleDelete(id: string) {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+    if (editingId === id) handleCancel();
+  }
 
-      <div className='inputInfo'>
-        <input placeholder='Digite a tarefa a ser adicionada'
-        className='input'
-        value={valores}
-        onChange={(e) => setValores(e.target.value)}
-        ref={inputRef} //Referência de valores de entrada, facilita o resgaste de dados para a aplicação
+  const filtered = tasks.filter((t) =>
+    t.text.toLowerCase().includes(query.trim().toLowerCase())
+  );
+
+  return (
+    <div className="container">
+      <header className="header">
+        <h1 className="title">StickNotes</h1>
+        <p className="counter" aria-live="polite">
+          {tasks.length === 0 && 'Nenhuma tarefa pendente'}
+          {tasks.length === 1 && 'Você tem 1 tarefa pendente'}
+          {tasks.length > 1 && `Você tem ${tasks.length} tarefas pendentes`}
+        </p>
+      </header>
+
+      <form className="inputInfo" onSubmit={handleSubmit}>
+        <label className="sr-only" htmlFor="task-input">
+          Nova tarefa
+        </label>
+        <input
+          id="task-input"
+          ref={inputRef}
+          className="input"
+          placeholder="Digite a tarefa e pressione Enter"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          maxLength={140}
         />
-        <button className='button' onClick={registrador}> 
-            { edicao.ativo ? "Atualizar Tarefa" : "Adicionar Tarefa"}
-           </button>
+        <div className="formActions">
+          <button className="button" type="submit" disabled={!value.trim()}>
+            {isEditing ? 'Atualizar tarefa' : 'Adicionar tarefa'}
+          </button>
+          {isEditing && (
+            <button className="button ghost" type="button" onClick={handleCancel}>
+              Cancelar
+            </button>
+          )}
+        </div>
+      </form>
+
+      <div className="toolbar">
+        <input
+          className="input search"
+          placeholder="Buscar..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          aria-label="Buscar tarefas"
+        />
       </div>
 
-      {tarefas.map((item) => (
-        <section key={item} className='stickers'>
+      {filtered.length === 0 && (
+        <p className="empty">
+          {tasks.length === 0
+            ? 'Comece adicionando sua primeira nota acima.'
+            : 'Nenhum resultado para essa busca.'}
+        </p>
+      )}
 
-          <div className='info'>
-          <span>{item}</span>
+      {filtered.map((task) => (
+        <section key={task.id} className="stickers">
+          <div className="info">
+            <span>{task.text}</span>
           </div>
-
-          <div className='actionButtons'>
-          <button className='editar' onClick={() => editar(item)}>Editar</button>
-          <button className='excluir' onClick={() => excluir(item)}>Excluir</button>
+          <div className="actionButtons">
+            <button
+              className="editar"
+              type="button"
+              onClick={() => handleEdit(task)}
+            >
+              Editar
+            </button>
+            <button
+              className="excluir"
+              type="button"
+              onClick={() => handleDelete(task.id)}
+            >
+              Excluir
+            </button>
           </div>
-
         </section>
       ))}
-
-   </div>
-
-)
-
-
+    </div>
+  );
 }
