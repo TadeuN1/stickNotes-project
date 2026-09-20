@@ -19,3 +19,16 @@ React 18, TypeScript, Vite, CSS, Vercel
 ```bash
 npm install
 npm run dev
+```
+
+## 📁 Estrutura
+```
+src/
+├── App.tsx
+├── App.css
+├── main.tsx
+```
+
+## 🗺️ Roadmap
+- [x] Busca e UI acessível
+- [ ] Backend FastAPI/Spring para sync
