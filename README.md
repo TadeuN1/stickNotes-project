@@ -1,8 +1,21 @@
-# STICK NOTES
-<img src="src/assets/sticknotes.png"/>
+# StickNotes
 
-> Project to create stick with information for activities, with options to exclude and edit stick already created.
+![preview](./src/assets/sticknotes.png)
 
-## ☕ HOW TO USE STICK NOTES ?! IT'S VERY EASY
+> Sticky notes web para criar, editar e excluir tarefas com persistência local.
 
-Acess: https://sticknotesactivities.vercel.app/
+**Demo:** https://sticknotesactivities.vercel.app/
+
+## ✨ Features
+- [x] Criar / editar / excluir notas
+- [x] Contador de pendentes
+- [x] Persistência em localStorage
+- [ ] Roadmap: filtros + busca + backend FastAPI/Spring + login
+
+## 🛠️ Stack
+React 18, TypeScript, Vite, CSS, Vercel
+
+## 🚀 Como rodar
+```bash
+npm install
+npm run dev
