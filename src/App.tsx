@@ -140,7 +140,7 @@ export default function App() {
       {filtered.length === 0 && (
         <p className="empty">
           {tasks.length === 0
-            ? 'Comece adicionando sua primeira nota acima.'
+            ? 'Comece adicionando a sua primeira nota acima.'
             : 'Nenhum resultado para essa busca.'}
         </p>
       )}
