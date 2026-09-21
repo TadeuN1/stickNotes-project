@@ -2,26 +2,26 @@
 
 ![preview](./src/assets/sticknotes.png)
 
-> Sticky notes web para criar, editar e excluir tarefas com persistência local.
+> Sticky notes web app to create, edit and delete tasks with local persistence.
 
 **Demo:** https://sticknotesactivities.vercel.app/
 
 ## ✨ Features
-- [x] Criar / editar / excluir notas
-- [x] Contador de pendentes
-- [x] Persistência em localStorage
-- [ ] Roadmap: filtros + busca + backend FastAPI/Spring + login
+- [x] Create / edit / delete notes
+- [x] Pending counter
+- [x] localStorage persistence
+- [ ] Roadmap: filters + search + FastAPI/Spring backend + login
 
 ## 🛠️ Stack
 React 18, TypeScript, Vite, CSS, Vercel
 
-## 🚀 Como rodar
+## 🚀 Run
 ```bash
 npm install
 npm run dev
 ```
 
-## 📁 Estrutura
+## 📁 Structure
 ```
 src/
 ├── App.tsx
@@ -30,5 +30,5 @@ src/
 ```
 
 ## 🗺️ Roadmap
-- [x] Busca e UI acessível
-- [ ] Backend FastAPI/Spring para sync
+- [x] Search and accessible UI
+- [ ] FastAPI/Spring backend for sync

@@ -15,7 +15,7 @@ function loadInitialTasks(): Task[] {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw) as Task[];
 
-    // Migração do formato antigo (string[]) para o novo (Task[])
+    // Migrate legacy format (string[]) to the new one (Task[])
     const legacy = localStorage.getItem(LEGACY_KEY);
     if (legacy) {
       const arr = JSON.parse(legacy) as string[];
@@ -96,32 +96,32 @@ export default function App() {
       <header className="header">
         <h1 className="title">StickNotes</h1>
         <p className="counter" aria-live="polite">
-          {tasks.length === 0 && 'Nenhuma tarefa pendente'}
-          {tasks.length === 1 && 'Você tem 1 tarefa pendente'}
-          {tasks.length > 1 && `Você tem ${tasks.length} tarefas pendentes`}
+          {tasks.length === 0 && 'No pending tasks'}
+          {tasks.length === 1 && 'You have 1 pending task'}
+          {tasks.length > 1 && `You have ${tasks.length} pending tasks`}
         </p>
       </header>
 
       <form className="inputInfo" onSubmit={handleSubmit}>
         <label className="sr-only" htmlFor="task-input">
-          Nova tarefa
+          New task
         </label>
         <input
           id="task-input"
           ref={inputRef}
           className="input"
-          placeholder="Digite a tarefa e pressione Enter"
+          placeholder="Type a task and press Enter"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           maxLength={140}
         />
         <div className="formActions">
           <button className="button" type="submit" disabled={!value.trim()}>
-            {isEditing ? 'Atualizar tarefa' : 'Adicionar tarefa'}
+            {isEditing ? 'Update task' : 'Add task'}
           </button>
           {isEditing && (
             <button className="button ghost" type="button" onClick={handleCancel}>
-              Cancelar
+              Cancel
             </button>
           )}
         </div>
@@ -130,18 +130,18 @@ export default function App() {
       <div className="toolbar">
         <input
           className="input search"
-          placeholder="Buscar..."
+          placeholder="Search..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          aria-label="Buscar tarefas"
+          aria-label="Search tasks"
         />
       </div>
 
       {filtered.length === 0 && (
         <p className="empty">
           {tasks.length === 0
-            ? 'Comece adicionando a sua primeira nota acima.'
-            : 'Nenhum resultado para essa busca.'}
+            ? 'Start by adding your first note above.'
+            : 'No results for this search.'}
         </p>
       )}
 
@@ -156,14 +156,14 @@ export default function App() {
               type="button"
               onClick={() => handleEdit(task)}
             >
-              Editar
+              Edit
             </button>
             <button
               className="excluir"
               type="button"
               onClick={() => handleDelete(task.id)}
             >
-              Excluir
+              Delete
             </button>
           </div>
         </section>
